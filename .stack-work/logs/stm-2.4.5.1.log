@@ -1,4 +1,0 @@
-Configuring stm-2.4.5.1...
-Preprocessing library for stm-2.4.5.1..
-Building library for stm-2.4.5.1..
-[ 1 of 10] Compiling Control.Concurrent.STM.TBQueue ( Control/Concurrent/STM/TBQueue.hs, .stack-work/dist/x86_64-linux/Cabal-2.2.0.1/build/Control/Concurrent/STM/TBQueue.o )
