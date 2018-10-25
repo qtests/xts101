@@ -1,0 +1,24 @@
+name:                xts101
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/githubuser/xts101#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2018 Author name here
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable xts101
+  hs-source-dirs:      src
+                    ,  src/Data
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  other-modules:       Data.TS
+  build-depends:       base >= 4.7 && < 5
+                    ,  vector
+                    ,  time
