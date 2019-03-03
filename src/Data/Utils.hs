@@ -6,7 +6,8 @@ module Data.Utils
        read2UTCTimeMaybe
     ,  read2DoubleMaybe
     ,  isAWorkingDay
-    
+    ,  gsort
+     
     -- Possibly re-write with vector !!
     ,  getColumnInCSV
     ,  delColumnInCSV
@@ -21,6 +22,11 @@ import Text.Read (readMaybe)
 import Text.CSV
 import Data.List (findIndex, genericIndex)
 import Data.Time.Calendar.WeekDate (toWeekDate)
+
+--sorting
+import qualified Data.Vector.Algorithms.Intro as I
+import qualified Data.Vector.Generic as G
+import qualified Data.Vector.Unboxed as U
 
 
 read2UTCTimeMaybe :: String -> String -> Maybe UTCTime
@@ -38,6 +44,25 @@ isAWorkingDay x =
     in aWeekDay < 6
 
 
+--- Sort vectors https://www.snoyman.com/blog/2017/12/what-makes-haskell-unique
+---              https://www.schoolofhaskell.com/user/commercial/content/vector
+---              https://www.schoolofhaskell.com/user/commercial/content/vector
+--               https://hackage.haskell.org/package/statistics-0.15.0.0/docs/src/Statistics.Function.html
+
+-- | Sort a vector.
+sort :: U.Vector Double -> U.Vector Double
+sort = G.modify I.sort
+{-# NOINLINE sort #-}
+
+-- | Sort a vector.
+gsort :: (Ord e, G.Vector v e) => v e -> v e
+gsort = G.modify I.sort
+{-# INLINE gsort #-}
+
+-- | Sort a vector using a custom ordering.
+sortBy :: (G.Vector v e) => I.Comparison e -> v e -> v e
+sortBy f = G.modify $ I.sortBy f
+{-# INLINE sortBy #-}
 
 
 

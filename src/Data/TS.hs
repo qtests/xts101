@@ -103,8 +103,8 @@ isEmptyTS (TS index values) = (V.null index) || (V.null values)
 alignTS' :: Num a => V.Vector UTCTime -> V.Vector (UTCTime, a) -> V.Vector (UTCTime, Maybe a)
 alignTS' idx ts = if (V.null idx) || (V.null ts) then V.empty else V.zip idx allValues
      where  tvMap = foldl (\mm (key, value) -> Map.insert key value mm) Map.empty ts
-            -- idx' = sort idx   -- https://www.snoyman.com/blog/2017/12/what-makes-haskell-unique
-            allValues = fmap (\v -> Map.lookup v tvMap) idx
+            idx' = gsort idx
+            allValues = fmap (\v -> Map.lookup v tvMap) idx'
 
 
 backFillNothingsForward :: Num a => V.Vector (Maybe a) ->  V.Vector (Maybe a)

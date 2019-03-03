@@ -1,7 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- TODO
---- 1. Sort vectors https://www.snoyman.com/blog/2017/12/what-makes-haskell-unique
 
 module Data.XTS
 (
