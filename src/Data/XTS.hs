@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- TODO
---- 1. Sort vectors
+--- 1. Sort vectors https://www.snoyman.com/blog/2017/12/what-makes-haskell-unique
 
 module Data.XTS
 (
@@ -113,3 +113,17 @@ combineXTSnTS (XTS xindex xdata xcolNames) colName (TS index value)
         fts = if V.null ats 
                     then XTS xindex xdata xcolNames
                     else XTS xindex (xdata V.++ (V.singleton $ snd $ V.unzip ats )) (xcolNames V.++ (V.singleton colName))
+
+
+-- To be done ...
+combineXTSnXTS :: (Eq a, Num a) => XTS a -> XTS a -> XTS a
+combineXTSnXTS  (XTS xindex xdata xcolNames) (XTS yindex ydata ycolNames) = undefined
+
+
+instance (Eq a, Num a) => Semigroup (XTS a) where
+    (<>) = combineXTSnXTS
+
+
+instance (Eq a, Num a) => Monoid (XTS a) where
+    mempty = XTS V.empty V.empty V.empty
+    mappend = (<>)

@@ -5,9 +5,13 @@ module Data.Utils
 (
        read2UTCTimeMaybe
     ,  read2DoubleMaybe
+    ,  isAWorkingDay
+    
+    -- Possibly re-write with vector !!
     ,  getColumnInCSV
     ,  delColumnInCSV
-
+    ,  getColumnInCSVEither
+    ,  removeAtIndexList
 )
 
 where
@@ -16,6 +20,7 @@ import Data.Time
 import Text.Read (readMaybe)
 import Text.CSV
 import Data.List (findIndex, genericIndex)
+import Data.Time.Calendar.WeekDate (toWeekDate)
 
 
 read2UTCTimeMaybe :: String -> String -> Maybe UTCTime
@@ -26,6 +31,11 @@ read2DoubleMaybe :: String -> Maybe Double
 read2DoubleMaybe x = readMaybe x :: Maybe Double
 
 
+isAWorkingDay::UTCTime -> Bool
+isAWorkingDay x =
+    let myWeekDay = (toWeekDate . utctDay) x
+        (_, _, aWeekDay) = myWeekDay
+    in aWeekDay < 6
 
 
 
@@ -40,6 +50,13 @@ Below - possibly rewrite [] to vector !!
 getColumnInCSV :: CSV -> String -> Either String [String]
 getColumnInCSV csv columnName =
     applyToColumnInCSV id csv columnName
+
+
+
+getColumnInCSVEither :: Either a CSV -> String -> Either String [String]
+getColumnInCSVEither csv columnName = do
+      either (\_ -> Left "Error reading CSV!" )
+             (\x -> applyToColumnInCSV id x columnName) csv
 
 
 {-|
