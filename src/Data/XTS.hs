@@ -35,7 +35,12 @@ data XTS a = XTS (V.Vector TSIndex) (V.Vector (ColXTS a)) (V.Vector ColNameXTS)
 
 
 createXTSRaw :: (Eq a, Num a) => V.Vector TSIndex -> V.Vector (ColXTS a) -> V.Vector ColNameXTS -> XTS a
-createXTSRaw times values colnames = XTS abtimes abvalues colnames
+createXTSRaw times values colnames
+    | null times                  = XTS V.empty V.empty V.empty
+    | null values                 = XTS V.empty V.empty V.empty 
+    | null colnames               = XTS V.empty V.empty V.empty 
+    | otherwise                   = XTS abtimes abvalues colnames 
+    
     where
         (abtimes, abvalues) = if (V.length times) == (V.length $ values V.! 0) then (times, values) else (V.empty, V.empty)
 
