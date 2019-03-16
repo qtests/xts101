@@ -8,8 +8,10 @@ module Data.XTS
     , readFileXTS
     , writeFileXTS
     , convertTS2XTS
-    , isEmptyXTS
     , combineXTSnTS
+    , isEmptyXTS
+    , takeRowXTS
+    , takeColXTS
 )
 where
 
@@ -36,13 +38,13 @@ data XTS a = XTS (V.Vector TSIndex) (V.Vector (ColXTS a)) (V.Vector ColNameXTS)
 
 createXTSRaw :: (Eq a, Num a) => V.Vector TSIndex -> V.Vector (ColXTS a) -> V.Vector ColNameXTS -> XTS a
 createXTSRaw times values colnames
-    | null times                  = XTS V.empty V.empty V.empty
-    | null values                 = XTS V.empty V.empty V.empty 
-    | null colnames               = XTS V.empty V.empty V.empty 
-    | otherwise                   = XTS abtimes abvalues colnames 
+    | null times || null values || null colnames     = XTS V.empty V.empty V.empty
+    | otherwise                                      = XTS abtimes abvalues colnames 
     
     where
-        (abtimes, abvalues) = if (V.length times) == (V.length $ values V.! 0) then (times, values) else (V.empty, V.empty)
+        (abtimes, abvalues) = if (V.length times) == (V.length $ values V.! 0) 
+                                    then (times, values) 
+                                    else (V.empty, V.empty)
 
 
 readFileXTS :: FilePath -> IO (XTS Double)
@@ -115,7 +117,8 @@ combineXTSnTS (XTS xindex xdata xcolNames) colName (TS index value)
         ats = alignBackFillForwardTS xindex (V.zip index value)
         fts = if V.null ats 
                     then XTS xindex xdata xcolNames
-                    else XTS xindex (xdata V.++ (V.singleton $ snd $ V.unzip ats )) (xcolNames V.++ (V.singleton colName))
+                    else XTS xindex (xdata V.++ (V.singleton $ snd $ V.unzip ats )) 
+                                                        (xcolNames V.++ (V.singleton colName))
 
 
 -- To be done ...
@@ -130,3 +133,18 @@ instance (Eq a, Num a) => Semigroup (XTS a) where
 instance (Eq a, Num a) => Monoid (XTS a) where
     mempty = XTS V.empty V.empty V.empty
     mappend = (<>)
+
+
+-- Take for rows and columns
+takeRowXTS :: Num a => Int -> XTS a -> XTS a
+takeRowXTS n (XTS x y z)      
+  |  n == 0                       = XTS V.empty V.empty V.empty
+  |  null x || null y || null y   = XTS V.empty V.empty V.empty
+  |  otherwise                    = XTS (V.take n x) (fmap (V.take n) y) z
+
+
+takeColXTS :: Num a => Int -> XTS a -> XTS a
+takeColXTS n (XTS x y z)
+  |  n == 0                       = XTS V.empty V.empty V.empty
+  |  null x || null y || null y   = XTS V.empty V.empty V.empty       
+  |  otherwise                    = XTS x (V.take n y) (V.take n z)

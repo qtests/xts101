@@ -11,6 +11,7 @@ module Data.TS
   , readFileTS
   , combineTS
   , isEmptyTS
+  , takeTS
   , alignBackFillForwardTS
 )
 where
@@ -148,3 +149,10 @@ alignBackFillForwardTS index ts
                     if V.all (== Nothing) values'
                         then V.empty
                         else V.zip tsIndex ( catMaybesV values' )
+
+
+takeTS :: Num a => Int -> TS a -> TS a
+takeTS n (TS x y)      
+  |  n == 0 || null x || null y    = TS V.empty V.empty
+  | otherwise                      = TS (V.take n x) (V.take n y)
+
